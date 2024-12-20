@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 // import { auth } from "@/auth";
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
@@ -15,11 +16,16 @@ const questions = [
       { _id: "1", name: "React" },
       { _id: "2", name: "JavaScript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: {
+      _id: "1",
+      name: "John Doe",
+      image:
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fpng-vector%2F20231019%2Fourmid%2Fpngtree-user-profile-avatar-png-image_10211471.png&f=1&nofb=1&ipt=a1f941a6f5c28f4cf18b53e4eadb5ac070fb20ea78d76cf9da8261aadf1cb437&ipo=images",
+    },
     upvotes: 10,
     answers: 5,
     views: 100,
-    createdAt: new Date(),
+    createdAt: new Date("2022-03-11"),
   },
   {
     _id: "2",
@@ -29,11 +35,16 @@ const questions = [
       { _id: "1", name: "JavaScript" },
       { _id: "2", name: "JavaScript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: {
+      _id: "1",
+      name: "John Doe",
+      image:
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpng.pngtree.com%2Fpng-vector%2F20231019%2Fourmid%2Fpngtree-user-profile-avatar-png-image_10211471.png&f=1&nofb=1&ipt=a1f941a6f5c28f4cf18b53e4eadb5ac070fb20ea78d76cf9da8261aadf1cb437&ipo=images",
+    },
     upvotes: 10,
     answers: 5,
     views: 100,
-    createdAt: new Date(),
+    createdAt: new Date("2023-02-13"),
   },
 ];
 
@@ -78,7 +89,7 @@ const Home = async ({ searchParams }: SearchParams) => {
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
-          <h1 key={question._id}>{question.title}</h1>
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
     </>
