@@ -5,6 +5,7 @@ import handleError from "@/lib/handlers/error";
 import { NotFoundError, ValidationError } from "@/lib/http-errors";
 import { UserSchema } from "@/lib/validations";
 
+// NOTE: the reason why it's post is because we're going to extract the email right from the body
 export async function POST(request: Request) {
   const { email } = await request.json();
 
