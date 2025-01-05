@@ -6,8 +6,9 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { api } from "@/lib/api";
 import handleError from "@/lib/handlers/error";
-import { NotFoundError } from "@/lib/http-errors";
+// import { NotFoundError } from "@/lib/http-errors";
 
 const questions = [
   {
@@ -57,14 +58,15 @@ interface SearchParams {
 const Home = async ({ searchParams }: SearchParams) => {
   const test = async () => {
     try {
-      throw new NotFoundError("4545454545");
+      // throw new NotFoundError("4545454545");
+      return await api.users.getAll();
     } catch (error) {
       return handleError(error);
     }
   };
 
   const result = await test();
-  // console.log("🚀 ~ Home ~ result:", result);
+  console.log("🚀 ~ Home ~ result:", result);
   // const session = await auth();
   const { query = "", filter = "" } = await searchParams;
 
