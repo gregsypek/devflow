@@ -49,7 +49,6 @@ export async function fetchHandler<T>(
 
   try {
     const response = await fetch(url, config);
-    console.log("🚀 ~ response:", response);
     clearTimeout(id);
 
     if (!response.ok) {
