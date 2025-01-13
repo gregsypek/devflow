@@ -1,3 +1,5 @@
+// NOTE: ONLY FOR LEARINIG PURPOSES AS AN EXAMPLE DELETE AFTER!!!
+
 import { NextRequest, NextResponse } from "next/server";
 
 import tickets from "@/app/database";
