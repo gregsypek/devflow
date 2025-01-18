@@ -35,3 +35,12 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+
+// difference between params and searchParasm
+// params: /questions/:id
+// searchParams :/questions>tag=javascript
+
+interface RouteParams {
+  params: Promise<Record<string, string>>;
+  searchParasm: Promise<Record<string, string>>;
+}
