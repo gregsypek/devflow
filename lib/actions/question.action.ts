@@ -195,17 +195,21 @@ export async function getQuestion(
   const { questionId } = validationResult.params!;
 
   try {
+    //  Metoda populate("tags") bierze te ID i automatycznie wykonuje dodatkowe zapytanie (lub zapytania) do bazy danych, aby pobrać pełne dokumenty Tag, które odpowiadają tym ID.
+    // Dzięki temu, zamiast pracować z samymi ID, możesz bezpośrednio pracować z danymi tagów, co jest szczególnie przydatne przy wyświetlaniu informacji lub dalszym przetwarzaniu danych.
     const question = await Question.findById(questionId).populate("tags");
 
     if (!question) {
       throw new Error("Question not found");
     }
-
+    // W Mongoose, dokumenty mają dodatkowe metody i właściwości, które nie są potrzebne przy przesyłaniu danych do klienta (np. metody jak save, validate, czy właściwości jak __v). Serializacja do JSON i natychmiastowa deserializacja usuwa te dodatkowe właściwości, dając czysty obiekt danych bez metod Mongoose.
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
 }
+
+// NOTE: CHECK mongoose-references.md file
 
 // Server Actions are designed to be used in different contexts:
 
