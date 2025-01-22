@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 
 import MobileNavigation from "./MobileNavigation";
 import Theme from "./Theme";
-import UserAvatar from "../ui/UserAvatar";
+import UserAvatar from "../UserAvatar";
 
 const Navbar = async () => {
   const session = await auth();

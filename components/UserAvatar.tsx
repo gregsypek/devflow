@@ -1,9 +1,11 @@
-import ROUTES from "@/constants/routes";
-// import { Link } from "lucide-react";
-import React from "react";
 import Image from "next/image";
-import { Avatar, AvatarFallback } from "./avatar";
 import Link from "next/link";
+import React from "react";
+
+import ROUTES from "@/constants/routes";
+
+import { Avatar, AvatarFallback } from "./ui/avatar";
+// import { Link } from "lucide-react";
 
 interface Props {
   id: string;
