@@ -102,7 +102,7 @@ export async function editQuestion(
 
   try {
     const question = await Question.findById(questionId).populate("tags");
-    console.log("🚀 ~ question:", question);
+    // console.log("🚀 ~ question:", question);
 
     if (!question) {
       throw new Error("Question not found");
@@ -208,8 +208,14 @@ export async function getQuestion(
   try {
     //  Metoda populate("tags") bierze te ID i automatycznie wykonuje dodatkowe zapytanie (lub zapytania) do bazy danych, aby pobrać pełne dokumenty Tag, które odpowiadają tym ID.
     // Dzięki temu, zamiast pracować z samymi ID, możesz bezpośrednio pracować z danymi tagów, co jest szczególnie przydatne przy wyświetlaniu informacji lub dalszym przetwarzaniu danych.
-    const question = await Question.findById(questionId).populate("tags");
+    // const question = await Question.findById(questionId).populate("tags");
+    const question = await Question.findById(questionId).populate([
+      { path: "author", select: "name image" },
+      { path: "tags", select: "name" },
+    ]);
 
+    // secon version also works well -   const question = await Question.findById(questionId).populate("tags").populate("author", "_id name image");
+    // TODO: HERE
     if (!question) {
       throw new Error("Question not found");
     }
@@ -272,9 +278,11 @@ export async function getQuestions(
     const totalQuestions = await Question.countDocuments(filterQuery);
 
     const questions = await Question.find(filterQuery)
-      .populate("tags", "name")
-      .populate("author")
-      // .populate("author", "name image")
+      .populate([
+        { path: "author", select: "name image" },
+        { path: "tags", select: "name" },
+      ])
+      // .populate("author", "name image email _id")
       .lean() // convert into js object
       .sort(sortCriteria)
       .skip(skip)

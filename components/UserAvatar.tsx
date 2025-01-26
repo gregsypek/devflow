@@ -6,7 +6,6 @@ import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback } from "./ui/avatar";
-// import { Link } from "lucide-react";
 
 interface Props {
   id: string;
@@ -20,8 +19,8 @@ const UserAvatar = ({
   id,
   name,
   imageUrl,
-  fallbackClassName,
   className = "h-9 w-9",
+  fallbackClassName,
 }: Props) => {
   const initials = name
     .split(" ")
@@ -29,6 +28,7 @@ const UserAvatar = ({
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
   return (
     <Link href={ROUTES.PROFILE(id)}>
       <Avatar className={className}>
