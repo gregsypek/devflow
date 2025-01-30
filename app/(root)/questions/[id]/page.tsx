@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+// eslint-disable-next-line camelcase
+import { unstable_after } from "next/server";
 import React from "react";
 
 import TagCard from "@/components/cards/TagCard";
@@ -13,10 +15,13 @@ import { formatNumber, getTimeStamp } from "@/lib/utils";
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  const [_, { success, data: question }] = await Promise.all([
-    await incrementViews({ questionId: id }),
-    await getQuestion({ questionId: id }),
-  ]);
+  await incrementViews({ questionId: id });
+
+  const { success, data: question } = await getQuestion({ questionId: id });
+
+  unstable_after(async () => {
+    await incrementViews({ questionId: id });
+  });
 
   if (!success || !question) return redirect("/404");
 
@@ -92,3 +97,12 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 };
 
 export default QuestionDetails;
+
+// NOTE: Key points to remember about 'after' function:
+
+// - It runs asynchronously after the response has been sent to the client.
+// - It doesn't affect the response time experienced by the client.
+//   - It's useful for tasks that don't need to block the response, such as LoggingConfig, analytics, or cleanup operations.
+// - It can access information about hte response but cannot modify it.
+
+// This flow allows for efficient request handling white still enabling important post-response to be PerformanceNodeTiming.
