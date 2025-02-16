@@ -42,3 +42,7 @@ interface CreateAnswerParams {
   questionId: string;
   content: sring;
 }
+
+interface GetAnswersParams extends PaginatedSearchParams {
+  questionId: string;
+}
