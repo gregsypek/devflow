@@ -1,4 +1,3 @@
-import { P } from "pino";
 import React from "react";
 
 import { EMPTY_ANSWERS } from "@/constants/states";
