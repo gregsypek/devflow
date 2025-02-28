@@ -24,11 +24,7 @@ const AllAnswers = ({ data, success, error, totalAnswers }: Props) => {
         success={success}
         empty={EMPTY_ANSWERS}
         render={(answers) =>
-          answers.map((answer) => (
-            <AnswerCard key={answer._id} {...answer}>
-              Answer Card
-            </AnswerCard>
-          ))
+          answers.map((answer) => <AnswerCard key={answer._id} {...answer} />)
         }
       />
     </div>

@@ -23,7 +23,6 @@ import { createAnswer } from "@/lib/actions/answer.action";
 import { api } from "@/lib/api";
 import { AnswerSchema } from "@/lib/validations";
 
-// Dynamically import the Editor component to prevent server-side rendering issues with MDXEditor
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
@@ -34,32 +33,27 @@ interface Props {
   questionContent: string;
 }
 
-// AnswerForm component handles user input for submitting an answer to a question
 const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
-  // useTransition manages the pending state of asynchronous operations for smoother UI updates
   const [isAnswering, startAnsweringTransition] = useTransition();
-
-  // useState tracks the loading state of the AI-generated answer feature
   const [isAISubmitting, setIsAISubmitting] = useState(false);
-
-  // useSession retrieves the user's authentication status from NextAuth
   const session = useSession();
 
-  // useRef creates a reference to the MDXEditor instance for programmatic control
   const editorRef = useRef<MDXEditorMethods>(null);
 
-  // useForm initializes the form with Zod validation via zodResolver and default values
-  // - resolver: Integrates Zod schema (AnswerSchema) for type-safe validation
-  // - defaultValues: Sets the initial value of the "content" field to an empty string
+  // Po wywołaniu useForm() otrzymujesz zestaw narzędzi, z których najczęściej używa się:
+  // register – funkcja do rejestrowania pól formularza,
+  // handleSubmit – funkcja do obsługi przesyłania formularza,
+  // formState – obiekt przechowujący stan formularza (np. błędy walidacji).
+
   const form = useForm<z.infer<typeof AnswerSchema>>({
+    // resolver w useForm({ resolver }) pozwala podłączyć zewnętrzną logikę walidacji.
+
     resolver: zodResolver(AnswerSchema),
     defaultValues: {
       content: "",
     },
   });
 
-  // handleSubmit processes the form submission asynchronously
-  // - Uses startAnsweringTransition to wrap the async operation, improving UX during loading
   const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
     startAnsweringTransition(async () => {
       const result = await createAnswer({
@@ -68,7 +62,6 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
       });
 
       if (result.success) {
-        // Reset the form fields to their default values after successful submission
         form.reset();
 
         toast({
@@ -76,7 +69,6 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
           description: "Your answer has been posted successfully",
         });
 
-        // Clear the editor content programmatically if the ref exists
         if (editorRef.current) {
           editorRef.current.setMarkdown("");
         }
@@ -90,9 +82,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
     });
   };
 
-  // generateAIAnswer fetches an AI-generated answer and updates the form
   const generateAIAnswer = async () => {
-    // Check if the user is authenticated before proceeding
     if (session.status !== "authenticated") {
       return toast({
         title: "Please log in",
@@ -103,7 +93,6 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
     setIsAISubmitting(true);
 
     try {
-      // Call the API to generate an AI answer based on the question title and content
       const { success, data, error } = await api.ai.getAnswer(
         questionTitle,
         questionContent
@@ -117,18 +106,12 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
         });
       }
 
-      // Format the AI response by replacing <br> tags with spaces and trimming
       const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
 
       if (editorRef.current) {
-        // Update the editor content with the AI-generated answer
         editorRef.current.setMarkdown(formattedAnswer);
 
-        // Programmatically set the form's "content" field value using setValue
-        // - setValue updates the field without requiring manual input
         form.setValue("content", formattedAnswer);
-
-        // Trigger validation for the "content" field to ensure it meets schema rules
         form.trigger("content");
       }
 
@@ -146,7 +129,6 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
         variant: "destructive",
       });
     } finally {
-      // Reset the AI submitting state regardless of success or failure
       setIsAISubmitting(false);
     }
   };
@@ -181,28 +163,23 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
           )}
         </Button>
       </div>
-
-      {/* Form component from react-hook-form integrates with the form instance */}
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleSubmit)} // handleSubmit wraps the custom submission logic
+          onSubmit={form.handleSubmit(handleSubmit)}
           className="mt-6 flex w-full flex-col gap-10"
         >
-          {/* FormField renders a controlled field connected to the form */}
           <FormField
-            control={form.control} // Provides access to form state and methods
-            name="content" // Field name matching the schema
+            control={form.control}
+            name="content"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-3">
                 <FormControl className="mt-3.5">
-                  {/* Editor component is a custom wrapper around MDXEditor */}
                   <Editor
-                    value={field.value} // Controlled value from the form
-                    editorRef={editorRef} // Ref for programmatic control
-                    fieldChange={field.onChange} // Updates form state on user input
+                    value={field.value}
+                    editorRef={editorRef}
+                    fieldChange={field.onChange}
                   />
                 </FormControl>
-                {/* FormMessage displays validation errors if they exist */}
                 <FormMessage />
               </FormItem>
             )}

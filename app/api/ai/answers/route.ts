@@ -52,7 +52,9 @@ async function generateAIResponse({
 }: AIRequestData): Promise<string> {
   try {
     const completion = await openai.chat.completions.create({
+      // model: "text-embedding-3-large",
       model: "gpt-4o-mini",
+      // model: "omni-moderation-latest",
       messages: [
         {
           role: "system",
