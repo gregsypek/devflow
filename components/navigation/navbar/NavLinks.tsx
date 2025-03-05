@@ -5,10 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
+import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
-
-import { SheetClose } from "../ui/sheet";
 
 const NavLinks = ({
   isMobileNav = false,
@@ -18,7 +17,7 @@ const NavLinks = ({
   userId?: string;
 }) => {
   const pathname = usePathname();
-  // const userId = 1;
+
   return (
     <>
       {sidebarLinks.map((item) => {
@@ -59,7 +58,7 @@ const NavLinks = ({
             </p>
           </Link>
         );
-        // return LinkComponent;
+
         return isMobileNav ? (
           <SheetClose asChild key={item.route}>
             {LinkComponent}

@@ -17,6 +17,7 @@ interface Question {
   author: Author;
   createdAt: Date;
   upvotes: number;
+  downvotes: number;
   answers: number;
   views: number;
 }
@@ -24,10 +25,7 @@ interface Question {
 type ActionResponse<T = null> = {
   success: boolean;
   data?: T;
-  error?: {
-    message: string;
-    details?: Record<string, string[]>;
-  };
+  error?: { message: string; details?: Record<string, string[]> };
   status?: number;
 };
 

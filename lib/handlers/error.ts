@@ -14,10 +14,7 @@ const formatResponse = (
 ) => {
   const responseContent = {
     success: false,
-    error: {
-      message,
-      details: errors,
-    },
+    error: { message, details: errors },
   };
 
   return responseType === "api"

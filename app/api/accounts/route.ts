@@ -11,6 +11,7 @@ export async function GET() {
     await dbConnect();
 
     const accounts = await Account.find();
+
     return NextResponse.json(
       { success: true, data: accounts },
       { status: 200 }
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       providerAccountId: validatedData.providerAccountId,
     });
 
-    if (!existingAccount)
+    if (existingAccount)
       throw new ForbiddenError(
         "An account with the same provider already exists"
       );

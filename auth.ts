@@ -57,41 +57,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, profile, account }) {
-      if (account?.type === "credentials") return true;
-      if (!account || !user) return false;
-
-      const userInfo = {
-        name: user.name!, // user.name! oznacza, że programista jest pewien, że user.name ma wartość w tym miejscu, mimo że typ User mógłby sugerować, że name może być null lub undefined.
-        email: user.email!,
-        image: user.image!,
-        username:
-          account.provider === "github"
-            ? (profile?.login as string)
-            : (user.name?.toLowerCase() as string),
-      };
-      // success because whe know that every API call return the success ,which is either boolean true or false check type ActionResponse below
-      const { success } = (await api.auth.oAuthSignIn({
-        user: userInfo,
-        provider: account.provider as "github" | "google",
-        providerAccountId: account.providerAccountId,
-      })) as ActionResponse;
-
-      // type ActionResponse<T = null> = {
-      //   success: boolean;
-      //   data?: T;
-      //   error?: {
-      //     message: string;
-      //     details?: Record<string, string[]>;
-      //   };
-      //   status?: number;
-      // };
-
-      if (!success) return false;
-
-      return true;
-    },
-
     // Wyjaśnienie:
     // Dane wejściowe:
     // session: Obiekt sesji, który NextAuth zamierza zwrócić do klienta.
@@ -104,7 +69,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.sub as string;
       return session;
     },
-
     // Ten fragment kodu definiuje callback jwt dla NextAuth.js, który jest używany do modyfikowania lub wzbogacania tokenu JWT (JSON Web Token) podczas procesu uwierzytelniania użytkownika. Oto szczegółowe wyjaśnienie:
 
     // JWT Callback: Wywoływany za każdym razem, gdy token JWT jest tworzony lub aktualizowany.
@@ -126,10 +90,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Jednoznaczna identyfikacja użytkownika: W JWT, pole sub jest używane do jednoznacznej identyfikacji subiekta tokenu (w tym przypadku użytkownika). Tutaj, sub jest ustawiany na userId z bazy danych, co zapewnia, że każdy token JWT ma unikalny identyfikator użytkownika.
         // Integracja z systemem użytkowników: Jeśli twoja aplikacja ma zdefiniowane konta użytkowników w bazie danych, ten callback pozwala na połączenie informacji z logowania OAuth lub credentials z istniejącymi rekordami użytkownika, zapewniając spójność.
         // Bezpieczeństwo i spójność: Modyfikowanie tokenu w ten sposób pozwala na dodanie dodatkowych informacji bezpieczeństwa, jak unikalny identyfikator użytkownika, który może być używany podczas weryfikacji sesji.
-
         if (userId) token.sub = userId.toString();
       }
       return token;
+    },
+    async signIn({ user, profile, account }) {
+      if (account?.type === "credentials") return true;
+      if (!account || !user) return false;
+
+      const userInfo = {
+        name: user.name!, // user.name! oznacza, że programista jest pewien, że user.name ma wartość w tym miejscu, mimo że typ User mógłby sugerować, że name może być null lub undefined.
+        email: user.email!,
+        image: user.image!,
+        username:
+          account.provider === "github"
+            ? (profile?.login as string)
+            : (user.name?.toLowerCase() as string),
+      };
+      // success because whe know that every API call return the success ,which is either boolean true or false check type ActionResponse below
+      const { success } = (await api.auth.oAuthSignIn({
+        user: userInfo,
+        provider: account.provider as "github" | "google",
+        providerAccountId: account.providerAccountId,
+      })) as ActionResponse;
+      // type ActionResponse<T = null> = {
+      //   success: boolean;
+      //   data?: T;
+      //   error?: {
+      //     message: string;
+      //     details?: Record<string, string[]>;
+      //   };
+      //   status?: number;
+      // };
+      if (!success) return false;
+
+      return true;
     },
   },
 });

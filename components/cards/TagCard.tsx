@@ -34,24 +34,27 @@ const TagCard = ({
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
   };
+
   const Content = (
     <>
-      <Badge className="background-light800_dark300 text-light400_light500 flex flex-row gap-2 rounded-md border-none px-4 py-2 uppercase">
+      <Badge className="subtle-medium background-light800_dark300 text-light400_light500 flex flex-row gap-2 rounded-md border-none px-4 py-2 uppercase">
         <div className="flex-center space-x-2">
           <i className={`${iconClass} text-sm`}></i>
           <span>{name}</span>
         </div>
+
         {remove && (
           <Image
             src="/icons/close.svg"
-            alt="close icon"
             width={12}
             height={12}
+            alt="close icon"
             className="cursor-pointer object-contain invert-0 dark:invert"
             onClick={handleRemove}
           />
         )}
       </Badge>
+
       {showCount && (
         <p className="small-medium text-dark500_light700">{questions}</p>
       )}
@@ -79,9 +82,11 @@ const TagCard = ({
           </div>
           <i className={cn(iconClass, "text-2xl")} aria-hidden="true" />
         </div>
+
         <p className="small-regular text-dark500_light700 mt-5 line-clamp-3 w-full">
           {iconDescription}
         </p>
+
         <p className="small-medium text-dark400_light500 mt-3.5">
           <span className="body-semibold primary-text-gradient mr-2.5">
             {questions}+

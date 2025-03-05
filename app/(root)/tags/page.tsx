@@ -1,5 +1,3 @@
-import React from "react";
-
 import TagCard from "@/components/cards/TagCard";
 import DataRenderer from "@/components/DataRenderer";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -18,7 +16,7 @@ const Tags = async ({ searchParams }: RouteParams) => {
   });
 
   const { tags } = data || {};
-  // console.log("🚀 ~ Tags ~ tags:", JSON.stringify(tags, null, 2));
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900 text-3xl">Tags</h1>
@@ -27,8 +25,7 @@ const Tags = async ({ searchParams }: RouteParams) => {
         <LocalSearch
           route={ROUTES.TAGS}
           imgSrc="/icons/search.svg"
-          placeholder="Search by tag name..."
-          iconPosition="left"
+          placeholder="Search tags..."
           otherClasses="flex-1"
         />
       </section>

@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-// eslint-disable-next-line camelcase
-import { unstable_after } from "next/server";
+import { after } from "next/server";
 import React from "react";
 
 import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
-import Preview from "@/components/editor/Preview";
+import { Preview } from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
+import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
@@ -17,12 +17,9 @@ import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-
-  await incrementViews({ questionId: id });
-
   const { success, data: question } = await getQuestion({ questionId: id });
 
-  unstable_after(async () => {
+  after(async () => {
     await incrementViews({ questionId: id });
   });
 
@@ -41,7 +38,6 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   const { author, createdAt, answers, views, tags, content, title } = question;
 
-  // In your component:
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -49,7 +45,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           <div className="flex items-center justify-start gap-1">
             <UserAvatar
               id={author._id}
-              name={author?.name ?? "Anonymous"}
+              name={author.name}
               className="size-[22px]"
               fallbackClassName="text-[10px]"
             />

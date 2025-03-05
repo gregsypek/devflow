@@ -1,7 +1,7 @@
 import React from "react";
 
-const Collections = () => {
-  return <div>Collections</div>;
+const Community = () => {
+  return <div>Community</div>;
 };
 
-export default Collections;
+export default Community;

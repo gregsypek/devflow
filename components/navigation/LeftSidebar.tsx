@@ -6,7 +6,7 @@ import React from "react";
 import { auth, signOut } from "@/auth";
 import ROUTES from "@/constants/routes";
 
-import NavLinks from "./NavLinks";
+import NavLinks from "./navbar/NavLinks";
 import { Button } from "../ui/button";
 
 const LeftSidebar = async () => {
@@ -18,11 +18,13 @@ const LeftSidebar = async () => {
       <div className="flex flex-1 flex-col gap-6">
         <NavLinks userId={userId} />
       </div>
+
       <div className="flex flex-col gap-3">
         {userId ? (
           <form
             action={async () => {
               "use server";
+
               await signOut();
             }}
           >
@@ -30,7 +32,7 @@ const LeftSidebar = async () => {
               type="submit"
               className="base-medium w-fit !bg-transparent px-4 py-3"
             >
-              <LogOut className="size-5 text-black dark:text-white " />
+              <LogOut className="size-5 text-black dark:text-white" />
               <span className="text-dark300_light900 max-lg:hidden">
                 Logout
               </span>
@@ -68,7 +70,7 @@ const LeftSidebar = async () => {
                   height={20}
                   className="invert-colors lg:hidden"
                 />
-                <span className="max-lg:hidden">Sign up</span>
+                <span className="max-lg:hidden">Sign Up</span>
               </Link>
             </Button>
           </>

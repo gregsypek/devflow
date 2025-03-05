@@ -1,9 +1,7 @@
 "use server";
 
-import mongoose, { FilterQuery } from "mongoose";
-import { revalidatePath } from "next/cache";
+import mongoose, { Error, FilterQuery } from "mongoose";
 
-import ROUTES from "@/constants/routes";
 import Question, { IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
 import Tag, { ITagDoc } from "@/database/tag.model";
@@ -20,7 +18,6 @@ import {
 
 export async function createQuestion(
   params: CreateQuestionParams
-  // ActionResponse contains the Question
 ): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
@@ -105,7 +102,6 @@ export async function editQuestion(
 
   try {
     const question = await Question.findById(questionId).populate("tags");
-    // console.log("🚀 ~ question:", question);
 
     if (!question) {
       throw new Error("Question not found");
@@ -127,7 +123,6 @@ export async function editQuestion(
           t.name.toLowerCase().includes(tag.toLowerCase())
         )
     );
-    console.log("🚀 ~ tagsToAdd:", tagsToAdd);
 
     const tagsToRemove = question.tags.filter(
       (tag: ITagDoc) =>
@@ -206,19 +201,21 @@ export async function getQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
   const { questionId } = validationResult.params!;
 
   try {
-    //  Metoda populate("tags") bierze te ID i automatycznie wykonuje dodatkowe zapytanie (lub zapytania) do bazy danych, aby pobrać pełne dokumenty Tag, które odpowiadają tym ID.
-    // Dzięki temu, zamiast pracować z samymi ID, możesz bezpośrednio pracować z danymi tagów, co jest szczególnie przydatne przy wyświetlaniu informacji lub dalszym przetwarzaniu danych.
-    // const question = await Question.findById(questionId).populate("tags");
-    const question = await Question.findById(questionId).populate([
-      { path: "author", select: "name image" },
-      { path: "tags", select: "name" },
-    ]);
+    const question = await Question.findById(questionId)
+      .populate("tags")
+      //  Metoda populate("tags") bierze te ID i automatycznie wykonuje dodatkowe zapytanie (lub zapytania) do bazy danych, aby pobrać pełne dokumenty Tag, które odpowiadają tym ID.
+      // Dzięki temu, zamiast pracować z samymi ID, możesz bezpośrednio pracować z danymi tagów, co jest szczególnie przydatne przy wyświetlaniu informacji lub dalszym przetwarzaniu danych.
+      // const question = await Question.findById(questionId).populate("tags");
+      .populate("author", "_id name image");
+    // second version also works well -   const question = await Question.findById(questionId).populate("tags").populate("author", "_id name image");
 
-    // secon version also works well -   const question = await Question.findById(questionId).populate("tags").populate("author", "_id name image");
-    // TODO: HERE
     if (!question) {
       throw new Error("Question not found");
     }
@@ -246,7 +243,6 @@ export async function getQuestions(
 
   const filterQuery: FilterQuery<typeof Question> = {};
 
-  // TODO: WE BULD THE LOGIC LATER;
   if (filter === "recommended") {
     return { success: true, data: { questions: [], isNext: false } };
   }
@@ -277,16 +273,11 @@ export async function getQuestions(
   }
 
   try {
-    // throw new Error("erorrrr");
-
     const totalQuestions = await Question.countDocuments(filterQuery);
 
     const questions = await Question.find(filterQuery)
-      .populate([
-        { path: "author", select: "name image" },
-        { path: "tags", select: "name" },
-      ])
-      // .populate("author", "name image email _id")
+      .populate("tags", "name")
+      .populate("author", "name image")
       .lean() // convert into js object
       .sort(sortCriteria)
       .skip(skip)
@@ -324,11 +315,10 @@ export async function incrementViews(
     if (!question) {
       throw new Error("Question not found");
     }
+
     question.views += 1;
 
     await question.save();
-
-    // revalidatePath(ROUTES.QUESTION(questionId));
 
     return {
       success: true,

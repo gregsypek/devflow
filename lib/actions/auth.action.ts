@@ -26,11 +26,8 @@ export async function signUpWithCredentials(
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  let transactionCommited = false;
-
   try {
     const existingUser = await User.findOne({ email }).session(session);
-    console.log("🚀 ~ existingUser:", existingUser);
 
     if (existingUser) {
       throw new Error("User already exists");
@@ -61,27 +58,20 @@ export async function signUpWithCredentials(
       { session }
     );
 
-    try {
-      await session.commitTransaction();
-      transactionCommited = true;
+    await session.commitTransaction();
 
-      await signIn("credentials", { email, password, redirect: false });
-      return { success: true };
-    } catch (error) {
-      if (!transactionCommited) await session.abortTransaction();
+    await signIn("credentials", { email, password, redirect: false });
 
-      return handleError(error) as ErrorResponse;
-    }
+    return { success: true };
   } catch (error) {
-    // Only attempt to abort the transaction if it hasn't been committed
-
-    if (!transactionCommited) await session.abortTransaction();
+    await session.abortTransaction();
 
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
   }
 }
+
 export async function signInWithCredentials(
   params: Pick<AuthCredentials, "email" | "password">
 ): Promise<ActionResponse> {

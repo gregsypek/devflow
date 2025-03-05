@@ -10,7 +10,7 @@ import dbConnect from "../mongoose";
 
 type ActionOptions<T> = {
   params?: T;
-  schema: ZodSchema<T>;
+  schema?: ZodSchema<T>;
   authorize?: boolean;
 };
 

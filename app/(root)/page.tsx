@@ -24,7 +24,6 @@ const Home = async ({ searchParams }: SearchParams) => {
   });
 
   const { questions } = data || {};
-  console.log("🚀 ~ Home ~ questions:", questions);
 
   return (
     <>

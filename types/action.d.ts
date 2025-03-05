@@ -40,7 +40,7 @@ interface IncrementViewsParams {
 
 interface CreateAnswerParams {
   questionId: string;
-  content: sring;
+  content: string;
 }
 
 interface GetAnswersParams extends PaginatedSearchParams {
